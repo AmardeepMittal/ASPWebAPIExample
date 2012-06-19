@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Web.Mvc;
-using MVCWebApiClient.Models;
+using MVCWebApiClient.SignalR;
+using SignalR;
+using Data;
+
 
 namespace MVCWebApiClient.Controllers
 {
@@ -18,7 +21,9 @@ namespace MVCWebApiClient.Controllers
 
   public ActionResult Index()
   {
-   return View(_productRepository.Get());
+   var product = _productRepository.Get();
+
+   return View(product);
   }
 
   //
@@ -44,7 +49,9 @@ namespace MVCWebApiClient.Controllers
   public ActionResult Create(Product model)
   {
    _productRepository.Create(model);
-                
+   SendTransaction(_productRepository.Get(model.Name).Id, "Create");
+
+              
    return RedirectToAction("Index");
   }
 
@@ -66,6 +73,7 @@ namespace MVCWebApiClient.Controllers
    try
    {
     _productRepository.Update(model);
+    SendTransaction(model.Id,"Edit");
 
     return RedirectToAction("Index");
    }
@@ -91,7 +99,10 @@ namespace MVCWebApiClient.Controllers
   {
    try
    {
+
     _productRepository.Delete(id);
+    SendTransaction(id, "Delete");
+
     return RedirectToAction("Index");
    }
    catch
@@ -99,5 +110,15 @@ namespace MVCWebApiClient.Controllers
     return View();
    }
   }
+
+
+  void SendTransaction(int id, string type) {
+
+
+   var clients = GlobalHost.ConnectionManager.GetHubContext<NotificationHub>().Clients;
+   clients.sendMessage(string.Format("Product ID: {0}, {1} ", id,type));  
+
+  }
+
  }
 }

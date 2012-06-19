@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using System.Web.Mvc;
+using Data;
 using FluentValidation;
 
 namespace MVCWebApiClient
@@ -14,9 +15,9 @@ namespace MVCWebApiClient
 
    try
    {
-    validator = DependencyResolver.Current.GetService(Type.GetType(string.Format("MVCWebApiClient.{0}{1}",
-     filterContext.ActionParameters["model"].GetType()
-     .Name, "Validator"))) as IValidator;
+   var typeString = string.Format("Data.{0}{1}",filterContext.ActionParameters["model"].GetType().Name, "Validator");
+
+   validator = ((StructureMapDependencyResolver)DependencyResolver.Current).GetService(typeString) as IValidator;
    }
    catch (Exception)
    {
@@ -31,9 +32,7 @@ namespace MVCWebApiClient
    if (!results.IsValid)
    {
     filterContext.Result = new JsonResult() { Data = results.Errors };
-
-    return;
-   }
+    }
 
    base.OnActionExecuting(filterContext);
   }

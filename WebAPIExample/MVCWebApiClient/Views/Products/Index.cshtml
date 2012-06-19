@@ -1,4 +1,4 @@
-﻿@model IEnumerable<MVCWebApiClient.Models.Product>
+﻿@model IEnumerable<Data.Product>
 
 @{
     ViewBag.Title = "Products";
@@ -20,7 +20,7 @@
         <th>Actions</th>
     </tr>
 
-@foreach ( MVCWebApiClient.Models.Product product in Model) {
+@foreach ( Data.Product product in Model) {
     <tr>
         <td>@product.Id</td>
         <td>@product.Name</td>

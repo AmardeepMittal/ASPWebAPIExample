@@ -5,6 +5,7 @@ using System.Web.Mvc;
 using Serializer;
 using StructureMap;
 using StructureMap.Configuration.DSL;
+using Data;
 
 namespace MVCWebApiClient
 {
@@ -36,8 +37,28 @@ namespace MVCWebApiClient
    _container = container;
   }
 
+
+
+  public object GetService(string fullName){
+
+    foreach(var item in _container.Model.AllInstances) {
+    
+       if (item.ConcreteType != null && item.ConcreteType.FullName == fullName)
+          return GetService(item.ConcreteType.UnderlyingSystemType);
+    }
+
+
+    return null;
+  
+  //linq not working.
+  //  var service = _container.Model.AllInstances.ToList().Where(x=> x.ConcreteType.FullName == fullName).First();
+  
+  
+  }
+
   public object GetService(System.Type serviceType)
   {
+
    object instance = _container.TryGetInstance(serviceType);
 
    if (instance == null && !serviceType.IsAbstract)

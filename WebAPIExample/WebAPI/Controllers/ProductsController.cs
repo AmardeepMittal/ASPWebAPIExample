@@ -1,18 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Web.Http;
 using WebApi.Models;
 
-
 namespace WebApi.Controllers
 {
  public class ProductsController : ApiController
  {
-  public IEnumerable<Product> GetProducts()
+
+ [Queryable]
+  public IQueryable<Product> GetProducts()
   {
-   return ProductsRepository.data;
+   return ProductsRepository.data.AsQueryable();
   }
 
   public Product GetProduct(int id)
@@ -20,7 +20,6 @@ namespace WebApi.Controllers
    
    try
    {
-    var product = ProductsRepository.get(id);
 
     return ProductsRepository.get(id);
 
